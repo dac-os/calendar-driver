@@ -12,75 +12,45 @@ exports.configUri = function (newUri) {
 exports.calendars = function (page, next) {
   'use strict';
 
-  return httpRequest(uri + '/calendars?page=' + page, function (error, res, body) {
-    var calendars;
-    if (error) {
-      error = new VError(error, 'error requesting events');
-      return next(error);
-    }
-    try {
-      calendars = JSON.parse(body);
-      return next(null, calendars);
-    } catch (error) {
-      error = new VError(error, 'error parsing calendars to json');
-      return next(error);
-    }
+  return httpRequest({
+    'url'  : uri + '/calendars',
+    'json' : true,
+    'qs'   : {'page' : page}
+  }, function (error, res, body) {
+    next(error, body);
   });
 };
 
 exports.calendar = function (id, next) {
   'use strict';
 
-  return httpRequest(uri + '/calendars/' + id, function (error, res, body) {
-    var calendar;
-    if (error) {
-      error = new VError(error, 'error requesting calendar "$s"', id);
-      return next(error);
-    }
-    try {
-      calendar = JSON.parse(body);
-      return next(null, calendar);
-    } catch (error) {
-      error = new VError(error, 'error parsing calendar "$s" to json', id);
-      return next(error);
-    }
+  return httpRequest({
+    'url'  : uri + '/calendars/' + id,
+    'json' : true
+  }, function (error, res, body) {
+    next(error, body);
   });
 };
 
 exports.events = function (calendar, page, next) {
   'use strict';
 
-  return httpRequest(uri + '/calendars/' + calendar + '/events?page=' + page, function (error, res, body) {
-    var events;
-    if (error) {
-      error = new VError(error, 'error requesting calendar "$s" events', calendar);
-      return next(error);
-    }
-    try {
-      events = JSON.parse(body);
-      return next(null, events);
-    } catch (error) {
-      error = new VError(error, 'error parsing calendar "$s" events to json', calendar);
-      return next(error);
-    }
+  return httpRequest({
+    'url'  : uri + '/calendars/' + calendar + '/events',
+    'json' : true,
+    'qs'   : {'page' : page}
+  }, function (error, res, body) {
+    next(error, body);
   });
 };
 
 exports.event = function (calendar, id, next) {
   'use strict';
 
-  return httpRequest(uri + '/calendars/' + calendar + '/events/' + id, function (error, res, body) {
-    var event;
-    if (error) {
-      error = new VError(error, 'error requesting event "$s"', id);
-      return next(error);
-    }
-    try {
-      event = JSON.parse(body);
-      return next(null, event);
-    } catch (error) {
-      error = new VError(error, 'error parsing event "$s" to json', id);
-      return next(error);
-    }
+  return httpRequest({
+    'url'  : uri + '/calendars/' + calendar + '/events/' + id,
+    'json' : true
+  }, function (error, res, body) {
+    next(error, body);
   });
 };

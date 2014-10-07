@@ -70,3 +70,34 @@ exports.event = function (calendar, id, next) {
     next(error, body);
   });
 };
+
+/**
+ * Validates if a date is between two events in the calendar
+ * @param todayDate
+ * @param yearEventBefore
+ * @param idEventBefore
+ * @param yearEventAfter
+ * @param idEventAfter
+ * @param next
+ */
+exports.betweenEvents = function (todayDate, yearEventBefore, idEventBefore, yearEventAfter, idEventAfter, next) {
+  'use strict';
+
+  this.event(yearEventBefore, idEventBefore, function (error, enrollmentStartEvent) {
+    if (error) {
+      error = new VError(error, 'Error when trying to get the calendar event');
+      next(error);
+    }
+
+    this.event(yearEventAfter, idEventAfter, function (error, enrollmentEndEvent) {
+      if (error) {
+        error = new VError(error, 'Error when trying to get the calendar event');
+        next(error);
+      }
+
+      next(!error && !!enrollmentStartEvent && !!enrollmentEndEvent &&
+        new Date(enrollmentStartEvent.date) <= todayDate &&
+        todayDate < new Date(enrollmentEndEvent.date));
+    }.bind(this));
+  }.bind(this));
+}
